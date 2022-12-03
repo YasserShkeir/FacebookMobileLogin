@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Alert, BackHandler, StyleSheet, View } from "react-native";
 
-const Profile = ({}) => {
+const Dashboard = ({}) => {
   useEffect(() => {
     const backAction = () => {
       Alert.alert("Hold on!", "Are you sure you want to exit the app?", [
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Profile;
+export default Dashboard;
