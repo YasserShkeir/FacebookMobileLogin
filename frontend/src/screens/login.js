@@ -7,6 +7,9 @@ import { ResponseType } from "expo-auth-session";
 import * as Facebook from "expo-auth-session/providers/facebook";
 import * as WebBrowser from "expo-web-browser";
 
+// Hooks
+import { checkFbCredentials } from "../hooks/auth.hook";
+
 WebBrowser.maybeCompleteAuthSession();
 
 const FB_APP_ID = "1474879553039409";
@@ -18,21 +21,12 @@ const Login = ({ navigation }) => {
     responseType: ResponseType.Token,
   });
 
-  if (request) {
-    console.log(
-      "You need to add this url to your authorized redirect urls on your Facebook app: " +
-        request.redirectUri
-    );
-  }
-
   // Check if token exists in storage and navigate to drawer navigator
   useEffect(() => {
     const checkToken = async () => {
-      const token = await AsyncStorage.getItem("token");
-      const user = await AsyncStorage.getItem("user");
-
-      if (token && user) {
-        navigation.navigate("DrawerNavigator", { user: JSON.parse(user) });
+      const fbID = await AsyncStorage.getItem("fbID");
+      if (fbID) {
+        navigation.navigate("DrawerNavigator");
       }
     };
     checkToken();
@@ -45,12 +39,19 @@ const Login = ({ navigation }) => {
           `https://graph.facebook.com/me?access_token=${response.authentication.accessToken}&fields=id,name,picture.type(large)`
         );
         const userInfo = await userInfoResponse.json();
-        AsyncStorage.setItem(
-          "token",
-          JSON.stringify(response.authentication.accessToken)
+        const checkFbCredentialsResponse = await checkFbCredentials(
+          userInfo.id
         );
-        AsyncStorage.setItem("user", JSON.stringify(userInfo));
-        navigation.navigate("DrawerNavigator", { user: userInfo });
+        if (checkFbCredentialsResponse) {
+          console.log("Logging in...");
+          await AsyncStorage.setItem("fbID", userInfo.id);
+          navigation.navigate("DrawerNavigator", {
+            fbID: userInfo.id,
+          });
+        } else {
+          console.log("user does not exist");
+          navigation.navigate("Signup", { userInfo });
+        }
       })();
     }
   }, [response]);
