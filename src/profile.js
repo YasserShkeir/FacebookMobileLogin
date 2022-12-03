@@ -1,17 +1,7 @@
 import { useEffect } from "react";
-import {
-  Alert,
-  BackHandler,
-  Button,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, BackHandler, StyleSheet, View } from "react-native";
 
-const Profile = ({ route, navigation }) => {
-  const { user } = route.params;
-
+const Profile = ({}) => {
   useEffect(() => {
     const backAction = () => {
       Alert.alert("Hold on!", "Are you sure you want to exit the app?", [
@@ -33,37 +23,13 @@ const Profile = ({ route, navigation }) => {
     return () => backHandler.remove();
   }, []);
 
-  return (
-    <View style={styles.profile}>
-      <Image source={{ uri: user.picture.data.url }} style={styles.image} />
-      <Text style={styles.name}>{user.name}</Text>
-      <Text>ID: {user.id}</Text>
-      <Button
-        title="Logout"
-        onPress={() => {
-          navigation.navigate("Login");
-        }}
-      />
-    </View>
-  );
+  return <View style={styles.dashboard}></View>;
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  dashboard: {
+    marginTop: 50,
     alignItems: "center",
-    justifyContent: "center",
-  },
-  profile: {
-    alignItems: "center",
-  },
-  name: {
-    fontSize: 20,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
   },
 });
 
