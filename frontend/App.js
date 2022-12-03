@@ -1,12 +1,16 @@
 import "react-native-gesture-handler";
+import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // Components
-import Login from "./src/login";
-import DrawerNavigator from "./src/drawerNav";
+import Login from "./src/screens/login";
+import Signup from "./src/screens/signup";
+import DrawerNavigator from "./src/components/drawerNav";
 
 const Stack = createNativeStackNavigator();
+
+LogBox.ignoreAllLogs();
 
 export default function App() {
   return (
@@ -19,6 +23,7 @@ export default function App() {
             headerShown: false,
           }}
         />
+        <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen
           name="DrawerNavigator"
           component={DrawerNavigator}
