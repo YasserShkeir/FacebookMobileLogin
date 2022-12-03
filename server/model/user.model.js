@@ -44,7 +44,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: "Image URL is required",
   },
-  tasks: [tasksExample],
+  tasks: {
+    type: Array,
+    default: tasksExample,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);
