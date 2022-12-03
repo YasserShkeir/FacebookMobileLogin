@@ -1,15 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { Text, TextInput, View, TouchableOpacity } from "react-native";
 
 // Hooks
 import { register } from "../hooks/auth.hook";
+
+// Styles
+import { signupStyles } from "../styles";
 
 const Signup = ({ route, navigation }) => {
   const userInfo = route.params.userInfo;
@@ -18,92 +15,59 @@ const Signup = ({ route, navigation }) => {
   const [imageURL, setImageURL] = useState(userInfo.picture.data.url);
 
   return (
-    <View style={styles.signup}>
-      <Text style={styles.signupFormLabel}>Facebook ID: {userInfo.id}</Text>
-      <View style={styles.signupForm}>
-        <View style={styles.signupFormRow}>
-          <Text style={styles.signupFormLabel}>Name</Text>
+    <View style={signupStyles.signup}>
+      <Text style={signupStyles.signupFormLabel}>
+        Facebook ID: {userInfo.id}
+      </Text>
+      <View style={signupStyles.signupForm}>
+        <View style={signupStyles.signupFormRow}>
+          <Text style={signupStyles.signupFormLabel}>Name</Text>
           <TextInput
-            style={styles.signupFormInput}
+            style={signupStyles.signupFormInput}
             placeholder="Enter your name"
             value={name}
             onChangeText={(text) => setName(text)}
           />
         </View>
 
-        <View style={styles.signupFormRow}>
-          <Text style={styles.signupFormLabel}>Date of birth</Text>
+        <View style={signupStyles.signupFormRow}>
+          <Text style={signupStyles.signupFormLabel}>Date of birth</Text>
           <TextInput
-            style={styles.signupFormInput}
+            style={signupStyles.signupFormInput}
             placeholder="Enter your date of birth"
             value={dateOfBirth}
             onChangeText={(text) => setDateOfBirth(text)}
           />
         </View>
 
-        <View style={styles.signupFormRow}>
-          <Text style={styles.signupFormLabel}>Image URL</Text>
+        <View style={signupStyles.signupFormRow}>
+          <Text style={signupStyles.signupFormLabel}>Image URL</Text>
           <TextInput
-            style={styles.signupFormInput}
+            style={signupStyles.signupFormInput}
             placeholder="Enter your image URL"
             value={imageURL}
             onChangeText={(text) => setImageURL(text)}
           />
         </View>
 
-        <View style={styles.signupFormRow}>
+        <View style={signupStyles.signupFormRow}>
           <TouchableOpacity
-            style={styles.signupFormButton}
+            style={signupStyles.signupFormButton}
             onPress={() => {
               register(userInfo.id, name, dateOfBirth, imageURL).then(
-                async (response) => {
-                  console.log("response", response);
+                async () => {
                   await AsyncStorage.setItem("fbID", userInfo.id);
-                  navigation.navigate("DrawerNavigator", {
-                    fbID: userInfo.id,
-                  });
+                  navigation.navigate("DrawerNavigator");
                 }
               );
             }}
           >
-            <Text style={styles.signupFormButtonText}>Sign up</Text>
+            <Text style={signupStyles.signupFormButtonText}>Sign up</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  signup: {
-    marginTop: 50,
-    alignItems: "center",
-  },
-  signupForm: {
-    width: "80%",
-    marginTop: 40,
-  },
-  signupFormRow: {
-    marginBottom: 20,
-  },
-  signupFormLabel: {
-    marginBottom: 5,
-  },
-  signupFormInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-  },
-  signupFormButton: {
-    backgroundColor: "#333",
-    padding: 10,
-    borderRadius: 5,
-  },
-  signupFormButtonText: {
-    color: "#fff",
-    textAlign: "center",
-  },
-});
 
 export default Signup;

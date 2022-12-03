@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { useEffect } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { Button, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ResponseType } from "expo-auth-session";
@@ -9,6 +9,9 @@ import * as WebBrowser from "expo-web-browser";
 
 // Hooks
 import { checkFbCredentials } from "../hooks/auth.hook";
+
+// Styles
+import { loginStyles } from "../styles";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -49,7 +52,7 @@ const Login = ({ navigation }) => {
             fbID: userInfo.id,
           });
         } else {
-          console.log("user does not exist");
+          console.log("User does not exist, signing up...");
           navigation.navigate("Signup", { userInfo });
         }
       })();
@@ -65,22 +68,14 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={loginStyles.container}>
       <Button
         disabled={!request}
-        title="Open FB Auth"
+        title="Login/Signup"
         onPress={handlePressAsync}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
 
 export default Login;
