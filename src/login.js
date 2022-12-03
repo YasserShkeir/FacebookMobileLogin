@@ -1,6 +1,7 @@
 import "react-native-gesture-handler";
 import { useEffect } from "react";
 import { Button, StyleSheet, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ResponseType } from "expo-auth-session";
 import * as Facebook from "expo-auth-session/providers/facebook";
@@ -24,6 +25,19 @@ const Login = ({ navigation }) => {
     );
   }
 
+  // Check if token exists in storage and navigate to drawer navigator
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem("token");
+      const user = await AsyncStorage.getItem("user");
+
+      if (token && user) {
+        navigation.navigate("DrawerNavigator", { user: JSON.parse(user) });
+      }
+    };
+    checkToken();
+  }, []);
+
   useEffect(() => {
     if (response && response.type === "success" && response.authentication) {
       (async () => {
@@ -31,7 +45,12 @@ const Login = ({ navigation }) => {
           `https://graph.facebook.com/me?access_token=${response.authentication.accessToken}&fields=id,name,picture.type(large)`
         );
         const userInfo = await userInfoResponse.json();
-        navigation.navigate("Profile", { user: userInfo });
+        AsyncStorage.setItem(
+          "token",
+          JSON.stringify(response.authentication.accessToken)
+        );
+        AsyncStorage.setItem("user", JSON.stringify(userInfo));
+        navigation.navigate("DrawerNavigator", { user: userInfo });
       })();
     }
   }, [response]);
@@ -60,17 +79,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  profile: {
-    alignItems: "center",
-  },
-  name: {
-    fontSize: 20,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
   },
 });
 
