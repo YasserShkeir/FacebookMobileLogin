@@ -1,5 +1,4 @@
 const graphql = require("graphql");
-const _ = require("lodash");
 const User = require("../model/user.model");
 
 const { GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList } =
@@ -25,7 +24,7 @@ const UserType = new GraphQLObjectType({
     tasks: {
       type: new GraphQLList(TaskType),
       resolve(parent, args) {
-        return _.filter(tasks, { userId: parent.id });
+        return parent.tasks;
       },
     },
   }),
@@ -38,7 +37,7 @@ const RootQuery = new GraphQLObjectType({
       type: UserType,
       args: { facebookId: { type: GraphQLString } },
       resolve(parent, args) {
-        // return _.find(users, { facebookId: args.facebookId });
+        return User.findOne({ facebookId: args.facebookId });
       },
     },
   },
@@ -54,7 +53,7 @@ const Mutation = new GraphQLObjectType({
         name: { type: GraphQLString },
         dateOfBirth: { type: GraphQLString },
         imageURL: { type: GraphQLString },
-        tasks: { type: new GraphQLList(TaskType) },
+        // tasks: { type: new GraphQLList(TaskType) },
       },
       resolve(parent, args) {
         let user = new User({

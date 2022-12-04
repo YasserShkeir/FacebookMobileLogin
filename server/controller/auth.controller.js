@@ -7,7 +7,6 @@ const fbCredentialsValidation = async (req, res) => {
   try {
     const user = await User.findOne({ facebookId });
     if (user) {
-      console.log("user", user);
       const token = jwt.sign(
         { subject: user.facebookId },
         process.env.JWT_SECRET_KEY
