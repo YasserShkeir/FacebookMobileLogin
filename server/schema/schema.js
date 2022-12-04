@@ -1,5 +1,6 @@
 const graphql = require("graphql");
 const _ = require("lodash");
+const User = require("../model/user.model");
 
 const { GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList } =
   graphql;
@@ -43,6 +44,33 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addUser: {
+      type: UserType,
+      args: {
+        facebookId: { type: GraphQLString },
+        name: { type: GraphQLString },
+        dateOfBirth: { type: GraphQLString },
+        imageURL: { type: GraphQLString },
+        tasks: { type: new GraphQLList(TaskType) },
+      },
+      resolve(parent, args) {
+        let user = new User({
+          facebookId: args.facebookId,
+          name: args.name,
+          dateOfBirth: args.dateOfBirth,
+          imageURL: args.imageURL,
+          tasks: args.tasks,
+        });
+        return user.save();
+      },
+    },
+  },
+});
+
 module.exports = new GraphQLSchema({
   query: RootQuery,
+  mutation: Mutation,
 });
