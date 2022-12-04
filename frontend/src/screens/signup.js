@@ -1,12 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { Text, TextInput, View, TouchableOpacity } from "react-native";
-
-// Hooks
-import { register } from "../hooks/auth.hook";
+import { useMutation } from "@apollo/client";
 
 // Styles
 import { signupStyles } from "../styles";
+
+// Queries
+import { SIGN_UP } from "../gqlQueries/user.queries";
 
 const Signup = ({ route, navigation }) => {
   const userInfo = route.params.userInfo;
@@ -14,6 +15,8 @@ const Signup = ({ route, navigation }) => {
   const [name, setName] = useState(userInfo.name);
   const [dateOfBirth, setDateOfBirth] = useState(userInfo.birthday);
   const [imageURL, setImageURL] = useState(userInfo.picture.data.url);
+
+  const [createUser] = useMutation(SIGN_UP);
 
   return (
     <View style={signupStyles.signup}>
@@ -55,12 +58,17 @@ const Signup = ({ route, navigation }) => {
           <TouchableOpacity
             style={signupStyles.signupFormButton}
             onPress={() => {
-              register(userInfo.id, name, dateOfBirth, imageURL).then(
-                async () => {
-                  await AsyncStorage.setItem("fbID", userInfo.id);
-                  navigation.navigate("DrawerNavigator");
-                }
-              );
+              createUser({
+                variables: {
+                  facebookId: userInfo.id,
+                  name: name,
+                  dateOfBirth: dateOfBirth,
+                  imageURL: imageURL,
+                },
+              }).then((res) => {
+                AsyncStorage.setItem("fbID", userInfo.id);
+                navigation.navigate("DrawerNavigator");
+              });
             }}
           >
             <Text style={signupStyles.signupFormButtonText}>Sign up</Text>
