@@ -22,13 +22,10 @@ function DrawerNavigator({ navigation }) {
   useEffect(() => {
     const getID = async () => {
       const fbID = await AsyncStorage.getItem("fbID");
-      console.log("facebookID 1", facebookID);
       setFacebookID(fbID);
     };
     getID();
   }, []);
-
-  console.log("facebookID 2", facebookID);
 
   return (
     <>
