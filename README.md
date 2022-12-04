@@ -1,4 +1,8 @@
-# Create a signin/signup app with the following features:
+# Facebook login mobile app:
+
+### 🔴 App was recreated using GraphQL on 2020-04-01
+
+## Stacks Used
 
 - [x] Initial Screen containing one button that calls FB API
 - [x] After clicking the button, the user should be able to login/signup with FB, if the user is already registered in the system, the user should be able to login, if the user is not registered, the user should be able to signup
@@ -10,6 +14,7 @@
 - [x] MongoDB
 - [x] Express
 - [x] NodeJS
+- [x] GraphQL
 
 ## How to run the app
 
