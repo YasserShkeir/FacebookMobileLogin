@@ -12,7 +12,7 @@ import { dashStyles } from "../styles";
 // Queries
 import { GET_SELF } from "../gqlQueries/user.queries";
 
-const Dashboard = () => {
+const Dashboard = ({}) => {
   const [facebookID, setFacebookID] = useState(null);
   const { loading, data } = useQuery(GET_SELF, {
     variables: { facebookId: facebookID },
@@ -52,7 +52,12 @@ const Dashboard = () => {
       {loading ? (
         <Text>Loading...</Text>
       ) : (
-        data.user.tasks.map((task) => <TaskCard task={task} />)
+        <>
+          {data.user &&
+            data.user.tasks.map((task) => (
+              <TaskCard key={task._id} task={task} />
+            ))}
+        </>
       )}
     </View>
   );
