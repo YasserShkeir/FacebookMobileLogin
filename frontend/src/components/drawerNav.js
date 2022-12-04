@@ -1,47 +1,54 @@
 import { useState, useEffect } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQuery } from "@apollo/client";
+import { Text } from "react-native";
 
 // Components
 import Dashboard from "../screens/dashboard";
 import NavigationDrawerStructure from "../components/drawerContent";
 
-// Hooks
-import { getSelf } from "../hooks/user.hook";
+// Queries
+import { GET_SELF } from "../gqlQueries/user.queries";
 
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator({ navigation }) {
-  const [user, setUser] = useState(null);
+  const [facebookID, setFacebookID] = useState(null);
+  const { loading, data } = useQuery(GET_SELF, {
+    variables: { facebookId: facebookID },
+  });
 
   useEffect(() => {
-    const getUser = async () => {
+    const getID = async () => {
       const fbID = await AsyncStorage.getItem("fbID");
-      await getSelf(fbID).then((response) => {
-        if (response) {
-          setUser(response);
-        } else {
-          console.log("No user found");
-          navigation.navigate("Login");
-        }
-      });
+      console.log("facebookID 1", facebookID);
+      setFacebookID(fbID);
     };
-    getUser();
+    getID();
   }, []);
 
+  console.log("facebookID 2", facebookID);
+
   return (
-    <Drawer.Navigator
-      initialRouteName="Dashboard"
-      drawerContent={(props) => (
-        <NavigationDrawerStructure
-          {...props}
-          user={user}
-          navigation={navigation}
-        />
+    <>
+      {loading ? (
+        <Text>loading...</Text>
+      ) : (
+        <Drawer.Navigator
+          initialRouteName="Dashboard"
+          drawerContent={(props) => (
+            <NavigationDrawerStructure
+              {...props}
+              user={data.user}
+              navigation={navigation}
+            />
+          )}
+        >
+          <Drawer.Screen name="Dashboard" component={Dashboard} />
+        </Drawer.Navigator>
       )}
-    >
-      <Drawer.Screen name="Dashboard" component={Dashboard} />
-    </Drawer.Navigator>
+    </>
   );
 }
 
