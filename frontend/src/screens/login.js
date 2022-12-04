@@ -42,10 +42,9 @@ const Login = ({ navigation }) => {
           `https://graph.facebook.com/me?access_token=${response.authentication.accessToken}&fields=id,name,picture.type(large),birthday`
         );
         const userInfo = await userInfoResponse.json();
-        const checkFbCredentialsResponse = await checkFbCredentials(
-          userInfo.id
-        );
-        if (checkFbCredentialsResponse) {
+        const token = await checkFbCredentials(userInfo.id);
+        console.log("token", token);
+        if (token) {
           console.log("Logging in...");
           await AsyncStorage.setItem("fbID", userInfo.id);
           navigation.navigate("DrawerNavigator", {
