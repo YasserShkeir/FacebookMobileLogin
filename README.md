@@ -1,4 +1,4 @@
-### Create a signin/signup app with the following features:
+# Create a signin/signup app with the following features:
 
 - [x] Initial Screen containing one button that calls FB API
 - [x] After clicking the button, the user should be able to login/signup with FB, if the user is already registered in the system, the user should be able to login, if the user is not registered, the user should be able to signup
