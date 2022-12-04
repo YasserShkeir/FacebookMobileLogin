@@ -1,33 +1,30 @@
 import { useState, useEffect } from "react";
-import { Alert, BackHandler, View } from "react-native";
+import { Alert, BackHandler, View, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQuery } from "@apollo/client";
 
 // Components
 import TaskCard from "../components/taskCard";
 
-// Hooks
-import { getSelf } from "../hooks/user.hook";
-
 // Styles
 import { dashStyles } from "../styles";
 
+// Queries
+import { GET_SELF } from "../gqlQueries/user.queries";
+
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
+  const [facebookID, setFacebookID] = useState(null);
+  const { loading, data } = useQuery(GET_SELF, {
+    variables: { facebookId: facebookID },
+  });
 
   useEffect(() => {
-    const getUser = async () => {
+    const getID = async () => {
       const fbID = await AsyncStorage.getItem("fbID");
-      await getSelf(fbID).then((response) => {
-        if (response) {
-          setUser(response);
-        } else {
-          console.log("No user found");
-          navigation.navigate("Login");
-        }
-      });
+      setFacebookID(fbID);
     };
-    getUser();
-  }, []);
+    getID();
+  }, [loading]);
 
   useEffect(() => {
     const backAction = () => {
@@ -52,7 +49,11 @@ const Dashboard = () => {
 
   return (
     <View style={dashStyles.dashboard}>
-      {user ? user.tasks.map((task) => <TaskCard task={task} />) : null}
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : (
+        data.user.tasks.map((task) => <TaskCard task={task} />)
+      )}
     </View>
   );
 };
