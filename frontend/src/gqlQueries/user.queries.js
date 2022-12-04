@@ -1,5 +1,26 @@
 import { gql } from "@apollo/client";
 
+export const SIGN_UP = gql`
+  mutation SignUp(
+    $facebookId: String!
+    $name: String!
+    $dateOfBirth: String!
+    $imageURL: String!
+  ) {
+    addUser(
+      facebookId: $facebookId
+      name: $name
+      dateOfBirth: $dateOfBirth
+      imageURL: $imageURL
+    ) {
+      facebookId
+      name
+      dateOfBirth
+      imageURL
+    }
+  }
+`;
+
 export const GET_SELF = gql`
   query getUser($facebookId: String!) {
     user(facebookId: $facebookId) {
