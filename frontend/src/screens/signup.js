@@ -10,8 +10,9 @@ import { signupStyles } from "../styles";
 
 const Signup = ({ route, navigation }) => {
   const userInfo = route.params.userInfo;
+
   const [name, setName] = useState(userInfo.name);
-  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState(userInfo.birthday);
   const [imageURL, setImageURL] = useState(userInfo.picture.data.url);
 
   return (

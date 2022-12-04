@@ -39,7 +39,7 @@ const Login = ({ navigation }) => {
     if (response && response.type === "success" && response.authentication) {
       (async () => {
         const userInfoResponse = await fetch(
-          `https://graph.facebook.com/me?access_token=${response.authentication.accessToken}&fields=id,name,picture.type(large)`
+          `https://graph.facebook.com/me?access_token=${response.authentication.accessToken}&fields=id,name,picture.type(large),birthday`
         );
         const userInfo = await userInfoResponse.json();
         const checkFbCredentialsResponse = await checkFbCredentials(
