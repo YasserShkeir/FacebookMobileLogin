@@ -1,23 +1,29 @@
 import "react-native-gesture-handler";
-import { useEffect } from "react";
-import { Button, View } from "react-native";
+import { useState, useEffect } from "react";
+import { SafeAreaView, Button, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ResponseType } from "expo-auth-session";
 import * as Facebook from "expo-auth-session/providers/facebook";
 import * as WebBrowser from "expo-web-browser";
 
-// Hooks
-import { checkFbCredentials } from "../hooks/auth.hook";
+import { useQuery } from "@apollo/client";
 
 // Styles
 import { loginStyles } from "../styles";
+
+// Queries
+import { SIGN_IN } from "../gqlQueries/user.queries";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const FB_APP_ID = "1474879553039409";
 
 const Login = ({ navigation }) => {
+  const [userInfo, setUserInfo] = useState(null);
+  const { loading, data } = useQuery(SIGN_IN, {
+    variables: { facebookId: userInfo?.id },
+  });
   // Request
   const [request, response, promptAsync] = Facebook.useAuthRequest({
     clientId: FB_APP_ID,
@@ -42,18 +48,7 @@ const Login = ({ navigation }) => {
           `https://graph.facebook.com/me?access_token=${response.authentication.accessToken}&fields=id,name,picture.type(large),birthday`
         );
         const userInfo = await userInfoResponse.json();
-        const token = await checkFbCredentials(userInfo.id);
-        console.log("token", token);
-        if (token) {
-          console.log("Logging in...");
-          await AsyncStorage.setItem("fbID", userInfo.id);
-          navigation.navigate("DrawerNavigator", {
-            fbID: userInfo.id,
-          });
-        } else {
-          console.log("User does not exist, signing up...");
-          navigation.navigate("Signup", { userInfo });
-        }
+        setUserInfo(userInfo);
       })();
     }
   }, [response]);
@@ -66,14 +61,38 @@ const Login = ({ navigation }) => {
     }
   };
 
+  // Check if we received a token
+  useEffect(() => {
+    if (userInfo) {
+      (async () => {
+        // Approve token data that checks if user exists
+        const token = data;
+        if (token) {
+          console.log("Logging in...");
+          await AsyncStorage.setItem("fbID", userInfo.id);
+          navigation.navigate("DrawerNavigator", {
+            fbID: userInfo.id,
+          });
+        } else {
+          console.log("User does not exist, signing up...");
+          navigation.navigate("Signup", { userInfo });
+        }
+      })();
+    }
+  }, [userInfo]);
+
   return (
-    <View style={loginStyles.container}>
-      <Button
-        disabled={!request}
-        title="Login/Signup"
-        onPress={handlePressAsync}
-      />
-    </View>
+    <SafeAreaView style={loginStyles.container}>
+      {loading ? (
+        <ActivityIndicator size={"large"} />
+      ) : (
+        <Button
+          title="Login with Facebook"
+          onPress={handlePressAsync}
+          disabled={!request}
+        />
+      )}
+    </SafeAreaView>
   );
 };
 
