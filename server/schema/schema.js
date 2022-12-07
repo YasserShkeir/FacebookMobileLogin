@@ -1,5 +1,6 @@
 const graphql = require("graphql");
 const User = require("../model/user.model");
+const jwt = require("jsonwebtoken");
 
 const { GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList } =
   graphql;
@@ -38,6 +39,23 @@ const RootQuery = new GraphQLObjectType({
       args: { facebookId: { type: GraphQLString } },
       resolve(parent, args) {
         return User.findOne({ facebookId: args.facebookId });
+      },
+    },
+    token: {
+      type: GraphQLString,
+      args: { facebookId: { type: GraphQLString } },
+      async resolve(parent, args) {
+        console.log("Token request received", args.facebookId);
+        // Get the user
+        const user = await User.findOne({ facebookId: args.facebookId }).exec();
+        if (user) {
+          return jwt.sign(
+            { facebookId: args.facebookId },
+            process.env.JWT_SECRET_KEY
+          );
+        } else {
+          return null;
+        }
       },
     },
   },
