@@ -1,5 +1,11 @@
 import { gql } from "@apollo/client";
 
+export const SIGN_IN = gql`
+  query SignIn($facebookId: String!) {
+    token(facebookId: $facebookId)
+  }
+`;
+
 export const SIGN_UP = gql`
   mutation SignUp(
     $facebookId: String!
