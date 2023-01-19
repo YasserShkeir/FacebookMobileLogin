@@ -1,6 +1,6 @@
 # Facebook login mobile app:
 
-### 🔴 App was recreated using GraphQL on 2020-04-01
+### 🔴 App was recreated using GraphQL
 
 ## Stacks Used
 
